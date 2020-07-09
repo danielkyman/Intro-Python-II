@@ -1,12 +1,21 @@
 from room import Room
 from player import Player
+from item import Item
 import os
+
+# items
+
+items = {
+    "rock": Item("Rock", "A large useless rock"),
+    "dagger": Item("Dagger", "A dull rusty dagger"),
+    "sword": Item("Sword", "A sharp heavy broadsword"),
+}
 
 # Declare all the rooms
 
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons", [items["rock"], items["dagger"]]),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
 passages run north and east."""),
@@ -60,31 +69,70 @@ def current_room_name():
 
 
 def current_room_desc():
-    return print(f"\nDescription: {new_player.current_room.description}")
+    print(f"Description: {new_player.current_room.description}")
+    if new_player.current_room.items:
+        item_logic()
+
+
+def item_logic():
+    print(
+        f"\n!!!ITEM!!!")
+    for item in new_player.current_room.items:
+        print(f"{item.name}")
+        item_answer = input(
+            "Would you like to pick up the item[1]? or leave it [0]?")
+        if int(item_answer) == 1:
+            add_item(item)
+
+
+def add_item(item):
+    new_player.inventory.append(item)
+    print(f"\nYou have added the {item.name} to your inventory!")
 
 
 def user_input():
-    print("\n[n] North")
+    print("\nWhich direction would you like to go? Enter one of the following:")
+    print("[n] North")
     print("[e] East")
     print("[s] South")
     print("[w] West")
     print("[q] Quit")
+    print("[i] Inventory")
     return input("Where would you like to go?")
 
 
 def user_direction(dir):
     if dir.lower() == 'n':
-        new_room = new_player.current_room.n_to
-        new_player.current_room = new_room
+        try:
+            new_room = new_player.current_room.n_to
+            new_player.current_room = new_room
+        except AttributeError:
+            print("\nYou cannot go any further in this direction")
     elif dir.lower() == 'e':
-        new_room = new_player.current_room.e_to
-        new_player.current_room = new_room
+        try:
+            new_room = new_player.current_room.e_to
+            new_player.current_room = new_room
+        except AttributeError:
+            print("\nYou cannot go any further in this direction")
     elif dir.lower() == 's':
-        new_room = new_player.current_room.s_to
-        new_player.current_room = new_room
+        try:
+            new_room = new_player.current_room.s_to
+            new_player.current_room = new_room
+        except AttributeError:
+            print("\nYou cannot go any further in this direction")
     elif dir.lower() == 'w':
-        new_room = new_player.current_room.w_to
-        new_player.current_room = new_room
+        try:
+            new_room = new_player.current_room.w_to
+            new_player.current_room = new_room
+        except AttributeError:
+            print("\nYou cannot go any further in this direction")
+    elif dir.lower() == 'i':
+        if len(new_player.inventory):
+            print(f"\nYou are currently carrying:")
+            for item in new_player.inventory:
+                print(f"A {item.name}")
+        else:
+            print(f"\nYou aren't carrying any items!")
     else:
         print("\nInput a valid direction")
 
